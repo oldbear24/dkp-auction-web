@@ -1,0 +1,65 @@
+<script lang="ts">
+  import { user } from '$lib/stores/userStore';
+  import { onMount } from 'svelte';
+  import pb, { subscribeToUserUpdate } from '$lib/pocketbase';
+
+  let userSubscription: (() => void) | null | void = null;
+
+  async function loginWithDiscord() {
+    try {
+      let methods = await pb.collection('users').listAuthMethods();
+      const authData = await pb.collection('users').authWithOAuth2({ provider: 'discord' });
+      user.set(authData.record);
+      userSubscription = await subscribeToUserUpdate(authData.record.id, (updatedUser) => {
+        user.set(updatedUser);
+      });
+    } catch (error) {
+      console.error('Login failed:', error);
+    }
+  }
+
+  function logout() {
+    pb.authStore.clear();
+    user.set(null);
+    if (userSubscription) {
+      userSubscription();
+      userSubscription = null;
+    }
+  }
+
+  onMount(async () => {
+    const currentUser = pb.authStore.model;
+    if (currentUser) {
+      user.set(currentUser);
+      userSubscription = await subscribeToUserUpdate(currentUser.id, (updatedUser) => {
+        user.set(updatedUser);
+      });
+    }
+  });
+</script>
+
+<nav class="navbar bg-base-100">
+  <div class="flex-1">
+    <a class="btn btn-ghost normal-case text-xl" href="/">Auction House</a>
+  </div>
+  <div class="flex-none">
+    {#if $user}
+      <div class="ml-4">
+        <span>Tokens: {$user.tokens} ({$user.tokens - $user.reservedTokens})</span>
+      </div>
+      <div class="dropdown dropdown-end">
+        <button class="btn btn-ghost btn-circle avatar" aria-label="User menu">
+          <div class="w-10 rounded-full">
+            <img src="{pb.files.getURL($user, $user.avatar, {'thumb': '100x100'})}" alt="User Avatar" />
+          </div>
+        </button>
+        <ul class="mt-3 p-2 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52">
+          <li><a href="/profile">Profile</a></li>
+          <li><button type="button" on:click={logout} aria-label="Logout">Logout</button></li>
+        </ul>
+      </div>
+    {:else}
+      <button class="btn btn-primary" on:click={loginWithDiscord}>Login with Discord</button>
+    {/if}
+  </div>
+</nav>
