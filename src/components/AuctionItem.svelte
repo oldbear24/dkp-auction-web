@@ -1,4 +1,6 @@
 <script lang="ts">
+  export const ssr = false;
+
   import pb from '$lib/pocketbase';
   import { writable } from 'svelte/store';
   import { onMount } from 'svelte';
@@ -76,7 +78,9 @@
   onMount(() => {
     updateCountdown();
     const interval = setInterval(updateCountdown, 1000);
-    return () => clearInterval(interval);
+    return () => {
+      console.debug('Clearing interval');
+      clearInterval(interval);}
   });
 </script>
 

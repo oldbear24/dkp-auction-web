@@ -1,16 +1,14 @@
 <script lang="ts">
+
   import { user } from '$lib/stores/userStore';
   import { onMount } from 'svelte';
-  import pb, { subscribeToUserUpdate } from '$lib/pocketbase';
-
-  let userSubscription: (() => void) | null | void = null;
-
+  import pb, { subscribeToUserUpdate,unsubscribeFromUserUpdates } from '$lib/pocketbase';
   async function loginWithDiscord() {
-    try {
-      let methods = await pb.collection('users').listAuthMethods();
+    try {     
+      unsubscribeFromUserUpdates();
       const authData = await pb.collection('users').authWithOAuth2({ provider: 'discord' });
       user.set(authData.record);
-      userSubscription = await subscribeToUserUpdate(authData.record.id, (updatedUser) => {
+       await subscribeToUserUpdate(authData.record.id, (updatedUser) => {
         user.set(updatedUser);
       });
     } catch (error) {
@@ -21,17 +19,14 @@
   function logout() {
     pb.authStore.clear();
     user.set(null);
-    if (userSubscription) {
-      userSubscription();
-      userSubscription = null;
-    }
+    unsubscribeFromUserUpdates();
   }
 
   onMount(async () => {
     const currentUser = pb.authStore.model;
     if (currentUser) {
       user.set(currentUser);
-      userSubscription = await subscribeToUserUpdate(currentUser.id, (updatedUser) => {
+       await subscribeToUserUpdate(currentUser.id, (updatedUser) => {
         user.set(updatedUser);
       });
     }

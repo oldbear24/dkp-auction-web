@@ -24,7 +24,9 @@ export async function subscribeToUserUpdate(userId: string, callback: (record: R
     callback(e.record);
   });
 }
-
+export async function unsubscribeFromUserUpdates() {
+  await pb.collection('users').unsubscribe();
+}
 export function getUser() {
   return pb.authStore.record as RecordModel | null;
 }
