@@ -9,7 +9,7 @@
   let totalPages = 1;
 
   async function fetchItems(page: number) {
-    const records = await pb.collection('auctions').getList(page, itemsPerPage);
+    const records = await pb.collection('auctions').getList(page, itemsPerPage,{sort:"-endTime"});
     items = records.items.map(record => ({
       id: record.id,
       name: record.itemName,

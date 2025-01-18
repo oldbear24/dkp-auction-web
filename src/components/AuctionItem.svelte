@@ -3,7 +3,7 @@
 
   import pb from '$lib/pocketbase';
   import { writable } from 'svelte/store';
-  import { onMount } from 'svelte';
+  import { onDestroy, onMount } from 'svelte';
 
   interface AuctionItem {
     id: string;
@@ -76,12 +76,17 @@
   }
 
   onMount(() => {
+    console.debug('Setting interval');
     updateCountdown();
     const interval = setInterval(updateCountdown, 1000);
     return () => {
       console.debug('Clearing interval');
       clearInterval(interval);}
   });
+
+  onDestroy( () => {
+        console.log("Date Component removed")
+    });
 </script>
 
 <div class="card shadow-lg">
