@@ -219,7 +219,7 @@
 								type="checkbox"
 								on:click={() => changeValidation(user.id, user.validated)}
 								bind:checked={user.validated}
-								class="toggle border-indigo-600 bg-indigo-500 checked:border-orange-500 checked:bg-orange-400 checked:text-orange-800"
+								class="toggle text-error checked:text-success"
 							/>
 						</td>
 					</tr>
