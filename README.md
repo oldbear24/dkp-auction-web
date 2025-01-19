@@ -1,27 +1,58 @@
-# sv
+# dkp-auction-web2
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+A web application for managing DKP (Dragon Kill Points) auctions, built with Svelte.
 
-## Creating a project
+## Table of Contents
 
-If you're seeing this, you've probably already done this step. Congrats!
+- [Introduction](#introduction)
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Development](#development)
+- [Building](#building)
+- [Contributing](#contributing)
+- [License](#license)
+
+## Introduction
+
+`dkp-auction-web2` is a web application designed to help guilds manage DKP auctions efficiently. It leverages the power of Svelte to provide a fast and responsive user experience.
+
+## Features
+
+- Create and manage DKP auctions
+- Real-time bidding
+- User authentication and roles
+- Responsive design
+
+## Installation
+
+To get started, clone the repository and install the dependencies:
 
 ```bash
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
+git clone https://github.com/yourusername/dkp-auction-web2.git
+cd dkp-auction-web2
+npm install
 ```
 
-## Developing
+## Usage
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+To start the application, run the following command:
 
 ```bash
 npm run dev
+```
 
-# or start the server and open the app in a new browser tab
+This will start a development server and you can view the application in your browser at `http://localhost:5000`.
+
+## Development
+
+For development, you can use the following commands:
+
+```bash
+# Start the development server
+npm run dev
+
+# Start the server and open the app in a new browser tab
 npm run dev -- --open
 ```
 
@@ -33,6 +64,11 @@ To create a production version of your app:
 npm run build
 ```
 
-You can preview the production build with `npm run preview`.
+You can preview the production build with:
+
+```bash
+npm run preview
+```
 
 > To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+
