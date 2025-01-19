@@ -25,6 +25,7 @@
   onMount(async () => {
     const currentUser = pb.authStore.record;
     if (currentUser) {
+      pb.collection("users").authRefresh()
       console.debug('User already logged in:', currentUser);
       
       user.set(currentUser);
@@ -35,33 +36,29 @@
   });
 </script>
 
-<nav class="navbar bg-base-100">
+<nav class="navbar bg-base-300	 shadow-sm">
   <div class="flex-1">
-    <a class="btn btn-ghost normal-case text-xl" href="/">Auction House</a>
+    <a class="btn btn-ghost text-xl" href="/">Auction House</a>
   </div>
-  {#if $user}
-  <div data-tip="Your current tokens and usable tokens." class="tooltip tooltip-bottom tooltip-info ml-4">
-    <span>Tokens: {$user.tokens} ({$user.tokens - $user.reservedTokens})</span>
-  </div>
-  {/if}
+
 
   <div class="flex-none">
-    {#if $user}
-     <!--  <div class="ml-4">
-        <span>Tokens: {$user.tokens} ({$user.tokens - $user.reservedTokens})</span>
-      </div> -->
+    {#if $user}    
+    <div data-tip="Your current tokens and usable tokens." class="tooltip tooltip-left pr-3	 tooltip-info ml-2">
+      <span>Tokens: {$user.tokens} ({$user.tokens - $user.reservedTokens})</span>
+    </div>
+    
       <div class="dropdown dropdown-end">
         <button class="btn btn-ghost btn-circle avatar" aria-label="User menu">
-          <div class="w-10 rounded-full">
-            <img src="{pb.files.getURL($user, $user.avatar, {'thumb': '100x100'})}" alt="User Avatar" />
+          <div class="w-10 rounded-full ring-primary ring-offset-base-100 ring ring-offset-1">
+            <img src="{pb.files.getURL($user, $user.avatar, {'thumb': '100x100'})}" alt="User Avatar"/>
           </div>
         </button>
         <ul class="mt-3 p-2 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52" style="z-index: 100;">
-         <!-- <li><a href="/profile">Profile</a></li>         -->  
           {#if $user.role.includes('manager')}
-          <li><a href="/create-auction">Create Auction</a></li> <!-- New link added here -->
-          <li><a href="/manage-users">Manage users</a></li> <!-- New link added here -->
-          <li><a href="/auction-results">Auction results</a></li> <!-- New link added here -->
+          <li><a href="/create-auction">Create Auction</a></li>
+          <li><a href="/manage-users">Manage users</a></li>
+          <li><a href="/auction-results">Auction results</a></li>
           {/if}
           <li><button type="button" on:click={logout} aria-label="Logout">Logout</button></li>
         </ul>
