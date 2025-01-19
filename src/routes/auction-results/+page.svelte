@@ -63,6 +63,18 @@
 			default:
 		}
 	}
+	function resolveAuction(id:string,isResolved:true) {
+		if(isResolved)return
+		try
+		{
+			pb.send("/api/resolve-auction/"+id,{
+				method:"POST"
+			})
+		}
+		catch(err){
+			console.error(err)
+		}
+	}
 </script>
 
 <div class="container mx-auto">
@@ -102,6 +114,7 @@
 								type="checkbox"
 								checked={result.resolved}
 								class="toggle text-error checked:text-success"
+								on:click={()=>resolveAuction(result.id,result.resolved)}
 								disabled={result.resolved}
 							/></td
 						>
