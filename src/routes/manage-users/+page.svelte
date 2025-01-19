@@ -1,20 +1,36 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { writable } from 'svelte/store';
 	import pb from '$lib/pocketbase';
 	import type { RecordModel } from 'pocketbase';
-	import { user } from '$lib/stores/userStore';
 
 	let users = writable<RecordModel[]>([]);
-	let currentPage = writable(1);
 	let searchQuery = writable('');
+	let verifiedFilter = writable('');
 	let selectedUsers = writable<string[]>([]);
+	let showDialog = writable(false);
+	let tokensToAdd = writable(0);
 	$: allSelected = $users.length === $selectedUsers.length;
-	async function fetchUsers(query: string = '') {
+	const userFields = 'id,name,avatar,tokens,validated,collectionId';
+	async function fetchUsers() {
 		try {
+			let query = '';
+			if($searchQuery!=''){
+				query+='name ~ '+ $searchQuery
+			}
+			if (query != '') {
+				query += ' && ';
+			}
+			if($verifiedFilter!='')
+			{
+				query+='validated = '+ $verifiedFilter
+			}
+			console.debug(query)
+			selectedUsers.set([]);
 			const response = await pb.collection('users').getFullList({
-				filter: query ? `name ~ "${query}"` : '',
-				sort: '+name:lower'
+				filter: query ? `${query}` : '',
+				sort: '+name:lower',
+				fields: userFields
 			});
 			users.set(response);
 		} catch (error) {
@@ -23,22 +39,44 @@
 	}
 
 	onMount(() => {
-		fetchUsers($searchQuery);
+		pb.realtime.subscribe('manage_users_update', userUpdateCallback);
+		fetchUsers();
+	});
+	onDestroy(() => {
+		pb.realtime.unsubscribe('manage_users_update');
 	});
 
-	currentPage.subscribe((page) => {
-		fetchUsers($searchQuery);
-	});
-
-	searchQuery.subscribe((query) => {
-		fetchUsers(query);
-	});
-
-	function editUser(user: any) {
-		// Implement user editing logic here
-		console.log('Edit user:', user);
+	let updateQueue: string[] = [];
+	function userUpdateCallback(data: any) {
+		updateQueue.push(data.userId);
 	}
 
+	function updateUserInTableWorker() {
+		if (updateQueue.length > 0) {
+			let id = updateQueue.shift();
+			if (id) {
+				console.debug('User update', id, updateQueue.length),
+					pb
+						.collection('users')
+						.getOne(id, { fields: userFields })
+						.then((rec) => {
+							users.update((currentItems) => {
+								return currentItems.map((item) =>
+									item.id === rec.id ? { ...item, ...rec } : item
+								);
+							});
+						});
+			}
+		}
+	}
+	setInterval(updateUserInTableWorker, 1);
+
+	searchQuery.subscribe((query) => {
+		fetchUsers();
+	});
+	verifiedFilter.subscribe((filter) => {
+		fetchUsers();
+	});
 	function toggleAllCheckboxes() {
 		console.debug('All checked:', allSelected);
 
@@ -50,6 +88,44 @@
 
 		console.debug('Selected users:', $selectedUsers);
 	}
+
+	async function changeValidation(userId: string, validated: boolean) {
+		pb.send(`/api/set-validated/${userId}`, {
+			method: 'POST',
+			body: JSON.stringify({ validated: !validated })
+		}).catch((err) => {
+			console.error(err);
+		});
+	}
+
+	function openDialog() {
+		if ($selectedUsers.length > 0) {
+			showDialog.set(true);
+		}
+	}
+
+	function closeDialog() {
+		showDialog.set(false);
+		tokensToAdd.set(0);
+	}
+
+	async function addTokens() {
+		try {
+			const userIds = $selectedUsers;
+			const newTokens = $tokensToAdd;
+			await pb.send('/api/change-tokens', {
+				method: 'POST',
+				body: JSON.stringify({ userIds: userIds, amount: newTokens })
+			});
+
+			closeDialog();
+		} catch (error) {
+			console.error('Error adding tokens:', error);
+		}
+	}
+	function filterVerified(filter: string) {
+		verifiedFilter.set(filter);
+	}
 </script>
 
 <div class="container mx-auto">
@@ -60,6 +136,32 @@
 		class="input input-bordered mb-4 w-full"
 		bind:value={$searchQuery}
 	/>
+	<button class="btn btn-primary mb-4" on:click={openDialog} disabled={$selectedUsers.length === 0}
+		>Add Tokens to Selected Users</button
+	>
+	<div class="filter">
+		<input
+			class="btn filter-reset"
+			on:click={() => filterVerified('')}
+			type="radio"
+			name="metaframeworks"
+			aria-label="All"
+		/>
+		<input
+			class="btn"
+			type="radio"
+			on:click={() => filterVerified('true')}
+			name="metaframeworks"
+			aria-label="Validated"
+		/>
+		<input
+			class="btn"
+			type="radio"
+			on:click={() => filterVerified('false')}
+			name="metaframeworks"
+			aria-label="Unvalidated"
+		/>
+	</div>
 	<div class="h-250 overflow-x-auto">
 		<table class="table-pin-cols table-pin-rows table">
 			<!-- head -->
@@ -70,14 +172,14 @@
 							<input
 								type="checkbox"
 								class="checkbox"
-                                bind:checked={allSelected}
+								bind:checked={allSelected}
 								on:click={toggleAllCheckboxes}
 							/>
 						</label>
 					</th>
 					<th>Name</th>
 					<th>Tokens</th>
-					<th>Actions</th>
+					<th>Validated</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -111,7 +213,12 @@
 						</td>
 						<td>{user.tokens}</td>
 						<td>
-							<button class="btn btn-sm btn-primary" on:click={() => editUser(user)}>Edit</button>
+							<input
+								type="checkbox"
+								on:click={() => changeValidation(user.id, user.validated)}
+								bind:checked={user.validated}
+								class="toggle border-indigo-600 bg-indigo-500 checked:border-orange-500 checked:bg-orange-400 checked:text-orange-800"
+							/>
 						</td>
 					</tr>
 				{/each}
@@ -121,3 +228,23 @@
 		</table>
 	</div>
 </div>
+
+{#if $showDialog}
+	<div class="bg-opacity-50 fixed inset-0 flex items-center justify-center" style="z-index: 200;">
+		<div class=" rounded p-6 shadow-lg">
+			<h2 class="mb-4 text-xl font-bold">Add Tokens</h2>
+			<p>Selected Users: {$selectedUsers.length}</p>
+			<label class="mb-2 block" for="tokensToAdd">Tokens to Add</label>
+			<input
+				id="tokensToAdd"
+				type="number"
+				class="input input-bordered mb-4 w-full"
+				bind:value={$tokensToAdd}
+			/>
+			<div class="flex justify-end">
+				<button class="btn btn-secondary mr-2" on:click={closeDialog}>Cancel</button>
+				<button class="btn btn-primary" on:click={addTokens}>Submit</button>
+			</div>
+		</div>
+	</div>
+{/if}
