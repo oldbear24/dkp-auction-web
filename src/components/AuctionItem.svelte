@@ -89,7 +89,7 @@
     });
 </script>
 
-<div class="card shadow-lg">
+<div class="card bg-base-200 shadow-lg">
   <figure>
     <img src={item.imageUrl} alt={item.name} class="w-full h-48 object-cover rounded-lg" />
   </figure>

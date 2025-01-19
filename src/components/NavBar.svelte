@@ -23,8 +23,9 @@
   }
 
   onMount(async () => {
-    const currentUser = pb.authStore.model;
+    const currentUser = pb.authStore.record;
     if (currentUser) {
+      console.debug('User already logged in:', currentUser);
       user.set(currentUser);
        await subscribeToUserUpdate(currentUser.id, (updatedUser) => {
         user.set(updatedUser);
@@ -37,19 +38,28 @@
   <div class="flex-1">
     <a class="btn btn-ghost normal-case text-xl" href="/">Auction House</a>
   </div>
+  {#if $user}
+  <div data-tip="Your current tokens and usable tokens." class="tooltip tooltip-bottom tooltip-info ml-4">
+    <span>Tokens: {$user.tokens} ({$user.tokens - $user.reservedTokens})</span>
+  </div>
+  {/if}
+
   <div class="flex-none">
     {#if $user}
-      <div class="ml-4">
+     <!--  <div class="ml-4">
         <span>Tokens: {$user.tokens} ({$user.tokens - $user.reservedTokens})</span>
-      </div>
+      </div> -->
       <div class="dropdown dropdown-end">
         <button class="btn btn-ghost btn-circle avatar" aria-label="User menu">
           <div class="w-10 rounded-full">
             <img src="{pb.files.getURL($user, $user.avatar, {'thumb': '100x100'})}" alt="User Avatar" />
           </div>
         </button>
-        <ul class="mt-3 p-2 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52">
-          <li><a href="/profile">Profile</a></li>
+        <ul class="mt-3 p-2 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52" style="z-index: 100;">
+          <li><a class="disabled" href="/profile">Profile</a></li>          
+          {#if $user.role.includes('manager')}
+          <li><a href="/create-auction">Create Auction</a></li> <!-- New link added here -->
+          {/if}
           <li><button type="button" on:click={logout} aria-label="Logout">Logout</button></li>
         </ul>
       </div>

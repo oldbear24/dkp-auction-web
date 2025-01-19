@@ -7,14 +7,19 @@
   let currentPage = 1;
   const itemsPerPage = 9;
   let totalPages = 1;
-
+  let searchQuery = '';
   async function fetchItems(page: number) {
-    const records = await pb.collection('auctions').getList(page, itemsPerPage,{sort:"-endTime"});
+    
+    let filterString = '';
+    if(searchQuery!=''){
+      filterString = `itemName ~ '${searchQuery}%'`;
+    }
+    const records = await pb.collection('auctions').getList(page, itemsPerPage,{sort:"-endTime",filter:filterString});
     items = records.items.map(record => ({
       id: record.id,
       name: record.itemName,
       bid: record.currentBid,
-      imageUrl: pb.files.getURL(record, record.mainImage, {'thumb': '100x250'}), // Ensure this field exists in your PocketBase collection
+      imageUrl: pb.files.getURL(record, record.mainImage, {'thumb': '500x200'}), // Ensure this field exists in your PocketBase collection
       description: record.description, // Ensure this field exists in your PocketBase collection
       state: record.state,
       endTime: record.endTime
@@ -28,7 +33,7 @@
 
     if (index !== -1) {
       items[index].bid = record.currentBid;
-      items[index].imageUrl = pb.files.getURL(record, record.mainImage, {'thumb': '100x250'}); // Update the image URL if it changes
+      items[index].imageUrl = pb.files.getURL(record, record.mainImage, {'thumb': '500x200'}); // Update the image URL if it changes
       items[index].description = record.description; // Update the description if it changes
       items[index].state = record.state;
       items[index].endTime = record.endTime;
@@ -46,10 +51,23 @@
     currentPage = page;
     fetchItems(currentPage).then(subscribeToCurrentPage);
   }
+  function handleSearch() {
+    fetchItems(1).then(subscribeToCurrentPage);
+  
+}
 
   fetchItems(currentPage).then(subscribeToCurrentPage);
 </script>
 {#if $user}
+<div class="flex justify-between items-center mb-4">
+<input 
+  type="text" 
+  placeholder="Search auctions..." 
+  class="input input-bordered w-full max-w-xs" 
+  bind:value={searchQuery}
+  on:input={handleSearch} 
+/>
+</div>
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
   {#each items as item}
     <AuctionItem {item} />
