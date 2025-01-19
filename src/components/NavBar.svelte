@@ -23,11 +23,10 @@
   }
 
   onMount(async () => {
+    await pb.collection("users").authRefresh()
     const currentUser = pb.authStore.record;
     if (currentUser) {
-      pb.collection("users").authRefresh()
       console.debug('User already logged in:', currentUser);
-      
       user.set(currentUser);
        await subscribeToUserUpdate(currentUser.id, (updatedUser) => {
         user.set(updatedUser);
