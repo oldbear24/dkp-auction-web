@@ -6,7 +6,10 @@ self.addEventListener('install', (event) => {
         '/index.html',
         '/global.css',
         '/build/bundle.css',
-        '/build/bundle.js'
+        '/build/bundle.js',
+        '/manifest.json',
+        '/icons/icon-192x192.png',
+        '/icons/icon-512x512.png'
       ]);
     })
   );
