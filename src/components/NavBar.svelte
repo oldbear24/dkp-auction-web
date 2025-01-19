@@ -59,6 +59,8 @@
           <li><a class="disabled" href="/profile">Profile</a></li>          
           {#if $user.role.includes('manager')}
           <li><a href="/create-auction">Create Auction</a></li> <!-- New link added here -->
+          <li><a href="/manage-users">Manage users</a></li> <!-- New link added here -->
+
           {/if}
           <li><button type="button" on:click={logout} aria-label="Logout">Logout</button></li>
         </ul>

@@ -230,8 +230,8 @@
 </div>
 
 {#if $showDialog}
-	<div class="bg-opacity-50 fixed inset-0 flex items-center justify-center" style="z-index: 200;">
-		<div class=" rounded p-6 shadow-lg">
+	<div class="modal modal-open">
+		<div class=" rounded p-6 shadow-lg modal-box">
 			<h2 class="mb-4 text-xl font-bold">Add Tokens</h2>
 			<p>Selected Users: {$selectedUsers.length}</p>
 			<label class="mb-2 block" for="tokensToAdd">Tokens to Add</label>
