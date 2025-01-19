@@ -16,9 +16,9 @@
 		try {
 			let query = '';
 			if($searchQuery!=''){
-				query+='name ~ '+ $searchQuery
+				query+=`name ~ '${$searchQuery}'`
 			}
-			if (query != '') {
+			if (query != '' && $verifiedFilter!='') {
 				query += ' && ';
 			}
 			if($verifiedFilter!='')
@@ -30,7 +30,9 @@
 			const response = await pb.collection('users').getFullList({
 				filter: query ? `${query}` : '',
 				sort: '+name:lower',
-				fields: userFields
+				fields: userFields,
+				requestKey:"get_users_management"
+				
 			});
 			users.set(response);
 		} catch (error) {

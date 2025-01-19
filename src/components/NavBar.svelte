@@ -26,6 +26,7 @@
     const currentUser = pb.authStore.record;
     if (currentUser) {
       console.debug('User already logged in:', currentUser);
+      
       user.set(currentUser);
        await subscribeToUserUpdate(currentUser.id, (updatedUser) => {
         user.set(updatedUser);
@@ -60,7 +61,7 @@
           {#if $user.role.includes('manager')}
           <li><a href="/create-auction">Create Auction</a></li> <!-- New link added here -->
           <li><a href="/manage-users">Manage users</a></li> <!-- New link added here -->
-
+          <li><a href="/auction-results">Auction results</a></li> <!-- New link added here -->
           {/if}
           <li><button type="button" on:click={logout} aria-label="Logout">Logout</button></li>
         </ul>
