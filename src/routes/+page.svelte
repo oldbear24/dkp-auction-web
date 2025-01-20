@@ -2,7 +2,7 @@
   import type { RecordModel } from 'pocketbase';
   import pb, { subscribeToAuctionUpdate, unsubscribeFromAuctionUpdates } from '../lib/pocketbase';
   import AuctionItem from '../components/AuctionItem.svelte';
-  import { user } from '$lib/stores/userStore';
+  import { user } from '$lib/stores/store';
   let items: { id: string; name: string; bid: number; imageUrl: string; description: string; state: string; endTime: string }[] = [];
   let currentPage = 1;
   const itemsPerPage = 9;

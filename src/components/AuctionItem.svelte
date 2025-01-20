@@ -4,6 +4,8 @@
   import pb from '$lib/pocketbase';
   import { writable } from 'svelte/store';
   import { onDestroy, onMount } from 'svelte';
+  import { toasts, showToast } from '$lib/stores/store';
+	import { ClientResponseError } from 'pocketbase';
 
   interface AuctionItem {
     id: string;
@@ -39,17 +41,11 @@
         },
         body: JSON.stringify({ amount: $bidAmount })
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to place bid');
-      }
-
-      const result = await response.json();
-      console.log('Bid confirmed:', result);
       // Update the item with the new bid amount
-      item.bid = $bidAmount;
-    } catch (error) {
-      console.error('Error:', error);
+      //item.bid = $bidAmount;
+      showToast('Bid placed successfully!', 'success');
+    } catch (error:any) {
+      showToast(error.message, 'error');
     } finally {
       closeModal();
     }

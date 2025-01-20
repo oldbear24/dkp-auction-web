@@ -1,7 +1,7 @@
 <script lang="ts">
 	import {  writable } from 'svelte/store';
 	import pb from '$lib/pocketbase';
-	import { user } from '$lib/stores/userStore';
+	import { user } from '$lib/stores/store';
 
 	let itemName = writable('');
 	let description = writable('');
