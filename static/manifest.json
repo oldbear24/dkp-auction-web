@@ -1,9 +1,9 @@
 {
-  "name": "DKP Auction Web",
+  "name": "DKP Auction",
   "short_name": "DKP Auction",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
+  "background_color": "#000000",
   "theme_color": "#000000",
   "icons": [
     {
