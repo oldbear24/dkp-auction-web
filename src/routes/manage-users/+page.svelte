@@ -11,7 +11,7 @@
 	let showDialog = writable(false);
 	let tokensToAdd = writable(0);
 	$: allSelected = $users.length === $selectedUsers.length;
-	const userFields = 'id,name,avatar,tokens,validated,collectionId';
+	const userFields = 'id,name,avatar,tokens,validated,collectionId,discordId';
 	async function fetchUsers() {
 		try {
 			let query = '';
@@ -125,6 +125,27 @@
 			console.error('Error adding tokens:', error);
 		}
 	}
+
+	function openFileDialog() {
+		const input = document.createElement('input');
+		input.type = 'file';
+		input.accept = '.csv';
+		input.onchange = async (event: Event) => {
+			const target = event.target as HTMLInputElement;
+			if (target.files && target.files.length > 0) {
+				const file = target.files[0];
+				file.text().then(async (text) => {
+					const userIds = text.split("\n").map(id => id.trim());	
+					console.log(userIds)			
+					selectedUsers.set($users.map(user => user.id));
+					selectedUsers.set($users.filter(user => userIds.includes(user.discordId)).map(user => user.id));
+					console.log($selectedUsers)
+				});
+			}
+		};
+		input.click();
+	}
+
 	function filterVerified(filter: string) {
 		verifiedFilter.set(filter);
 	}
@@ -138,9 +159,14 @@
 		class="input input-bordered mb-4 w-full"
 		bind:value={$searchQuery}
 	/>
-	<button class="btn btn-primary mb-4" on:click={openDialog} disabled={$selectedUsers.length === 0}
-		>Add Tokens to Selected Users</button
-	>
+	<div class="mb-4 flex space-x-2">
+		<button class="btn btn-primary" on:click={openDialog} disabled={$selectedUsers.length === 0}>
+			Add Tokens to Selected Users
+		</button>
+		<button class="btn btn-secondary" on:click={openFileDialog}>
+			Import users
+		</button>
+	</div>
 	<div class="filter">
 		<input
 			class="btn filter-reset"
