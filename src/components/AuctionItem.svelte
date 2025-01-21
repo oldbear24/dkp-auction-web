@@ -4,9 +4,7 @@
   import pb from '$lib/pocketbase';
   import { writable } from 'svelte/store';
   import { onDestroy, onMount } from 'svelte';
-  import { toasts, showToast } from '$lib/stores/store';
-	import { ClientResponseError } from 'pocketbase';
-
+  import { showToast,user } from '$lib/stores/store';
   interface AuctionItem {
     id: string;
     name: string;
@@ -15,6 +13,7 @@
     bid: number;
     state: string;
     endTime: string; // Assuming endTime is a string in ISO format
+    winner:string
   }
 
   export let item: AuctionItem;
@@ -85,7 +84,7 @@
     });
 </script>
 
-<div class="card bg-base-200 shadow-lg">
+<div class="card bg-base-200 shadow-lg {item.winner==$user?.id?'border border-accent':''}	">
   <figure>
     <img src={item.imageUrl} alt={item.name} class="w-full h-48 object-cover rounded-lg" />
   </figure>
