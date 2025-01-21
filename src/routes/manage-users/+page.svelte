@@ -200,12 +200,16 @@
 						</th>
 						<td>
 							<div class="flex items-center gap-3">
-								<div class="avatar">
-									<div class="mask mask-squircle h-12 w-12">
+								<div class="avatar avatar-placeholder">
+									<div class="w-12 rounded-full ring-primary ring-offset-base-100 ring ring-offset-1">
+										{#if user.avatar}
 										<img
 											src={pb.files.getURL(user, user.avatar, { thumb: '100x100' })}
 											alt="{user.name} profile image"
 										/>
+										{:else}
+										<span class="text-xl">{user.name.substring(0,2)}</span>
+										{/if}
 									</div>
 								</div>
 								<div>

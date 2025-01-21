@@ -49,9 +49,14 @@
     </div>
     
       <div class="dropdown dropdown-end">
-        <button class="btn btn-ghost btn-circle avatar" aria-label="User menu">
+        <button class="btn btn-ghost btn-circle avatar avatar-placeholder" aria-label="User menu">
           <div class="w-10 rounded-full ring-primary ring-offset-base-100 ring ring-offset-1">
+            {#if $user.avatar}
             <img src="{pb.files.getURL($user, $user.avatar, {'thumb': '100x100'})}" alt="User Avatar"/>
+            {:else}
+            <span class="text-xl">{$user.name.substring(0,2)}</span>
+            {/if}
+
           </div>
         </button>
         <ul class="mt-3 p-2 shadow menu menu-compact dropdown-content bg-base-200 rounded-box w-52" style="z-index: 100;">
