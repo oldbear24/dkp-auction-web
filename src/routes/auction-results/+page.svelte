@@ -5,7 +5,7 @@
 	import type { RecordModel, RecordSubscription } from 'pocketbase';
 
 	let auctionResults = writable<RecordModel[]>([]);
-	const auctionFields = 'auction,resolved,resolvedBy,created,winner';
+	const auctionFields = 'id,expand.auction.itemName,expand.auction.description,resolved,expand.resolvedBy.name,created,expand.auction.expand.winner.name';
 	const auctionExpand = 'resolvedBy,auction,auction.winner';
 	let showUnresolvedOnly = writable(true);
 
@@ -18,7 +18,7 @@
 			const response = await pb.collection('auctionsResult').getFullList({
 				sort: '-created',
 				filter: filterQuery,
-				fields: '', //auctionFields,
+				fields:  auctionFields,
 				expand: auctionExpand
 			});
 			console.debug('Filter:', filterQuery);
@@ -42,14 +42,14 @@
 		switch (recordSub.action) {
 			case 'create':
 				pb.collection('auctionsResult')
-					.getOne(recordSub.record.id, { expand: auctionExpand })
+					.getOne(recordSub.record.id, { fields:auctionFields ,expand: auctionExpand })
 					.then((record) => {
 						auctionResults.set([record, ...$auctionResults]);
 					});
 				break;
 			case 'update':
 				pb.collection('auctionsResult')
-					.getOne(recordSub.record.id, { expand: auctionExpand })
+					.getOne(recordSub.record.id, {fields:auctionFields , expand: auctionExpand })
 					.then((record) => {
 						auctionResults.update((results) =>
 							results.map((result) =>

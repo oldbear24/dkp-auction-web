@@ -3,7 +3,7 @@
   import pb, { subscribeToAuctionUpdate, unsubscribeFromAuctionUpdates } from '../lib/pocketbase';
   import AuctionItem from '../components/AuctionItem.svelte';
   import { user } from '$lib/stores/store';
-  let items: { id: string; name: string; bid: number; imageUrl: string; description: string; state: string; endTime: string }[] = [];
+  let items: { id: string; name: string; bid: number; imageUrl: string; description: string; state: string; endTime: string,winner:string }[] = [];
   let currentPage = 1;
   const itemsPerPage = 9;
   let totalPages = 1;
@@ -21,7 +21,8 @@
       imageUrl: pb.files.getURL(record, record.mainImage, { 'thumb': '500x200' }) || '/no_image_placeholder_dark.png',
       description: record.description,
       state: record.state,
-      endTime: record.endTime
+      endTime: record.endTime,
+      winner: record.winner
     }));
     totalPages = Math.ceil(records.totalItems / itemsPerPage);
   }
@@ -31,15 +32,17 @@
     console.debug('Updating item:', record.id, index);
 
     if (index !== -1) {
-      items[index].bid = record.currentBid;
       let imgUrl = pb.files.getURL(record, record.mainImage, { 'thumb': '500x200' });
       if (!imgUrl) {
         imgUrl = "/no_image_placeholder_dark.png";
       }
+      items[index].bid = record.currentBid;
       items[index].imageUrl = imgUrl;
       items[index].description = record.description;
       items[index].state = record.state;
       items[index].endTime = record.endTime;
+      items[index].winner = record.winner;
+
     }
   }
 
