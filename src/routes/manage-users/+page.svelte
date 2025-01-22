@@ -3,6 +3,7 @@
 	import { writable } from 'svelte/store';
 	import pb from '$lib/pocketbase';
 	import type { RecordModel } from 'pocketbase';
+	import AuthGuard from '../../components/AuthGuard.svelte';
 
 	let users = writable<RecordModel[]>([]);
 	let searchQuery = writable('');
@@ -224,8 +225,7 @@
 								/>
 							</label>
 						</th>
-						<td>
-							<div class="flex items-center gap-3">
+						<td><div class="flex items-center gap-3">
 								<div class="avatar avatar-placeholder">
 									<div class="w-12 rounded-full ring-primary ring-offset-base-100 ring ring-offset-1">
 										{#if user.avatar}
@@ -241,6 +241,7 @@
 								<div>
 									<div class="font-bold">{user.name}</div>
 								</div>
+							
 							</div>
 						</td>
 						<td>{user.tokens}</td>
@@ -280,3 +281,4 @@
 		</div>
 	</div>
 {/if}
+<AuthGuard requiredRole="manager" />

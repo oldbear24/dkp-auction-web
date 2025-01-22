@@ -3,6 +3,7 @@
 	import { writable } from 'svelte/store';
 	import pb from '$lib/pocketbase';
 	import type { RecordModel, RecordSubscription } from 'pocketbase';
+	import AuthGuard from '../../components/AuthGuard.svelte';
 
 	let auctionResults = writable<RecordModel[]>([]);
 	const auctionFields = 'id,expand.auction.itemName,expand.auction.description,resolved,expand.resolvedBy.name,created,expand.auction.expand.winner.name';
@@ -129,3 +130,4 @@
 		</table>
 	</div>
 </div>
+<AuthGuard requiredRole="manager" />

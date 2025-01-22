@@ -60,6 +60,7 @@
           </div>
         </button>
         <ul class="mt-3 p-2 shadow menu menu-compact dropdown-content bg-base-200 rounded-box w-52" style="z-index: 100;">
+          <li><a href="/profile">Profile</a></li>
           {#if $user.role.includes('manager')}
           <li><a href="/create-auction">Create Auction</a></li>
           <li><a href="/manage-users">Manage users</a></li>

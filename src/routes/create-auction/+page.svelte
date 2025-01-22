@@ -1,7 +1,7 @@
 <script lang="ts">
 	import {  writable } from 'svelte/store';
 	import pb from '$lib/pocketbase';
-	import { user } from '$lib/stores/store';
+	import AuthGuard from '../../components/AuthGuard.svelte';
 
 	let itemName = writable('');
 	let description = writable('');
@@ -66,3 +66,4 @@
 </fieldset>
 </form>
 </div>
+<AuthGuard requiredRole="manager" />
