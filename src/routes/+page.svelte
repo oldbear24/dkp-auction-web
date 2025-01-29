@@ -9,9 +9,12 @@
   let totalPages = 1;
   let searchQuery = '';
   async function fetchItems(page: number) {
-    let filterString = '';
+    const date = new Date();
+        date.setDate(date.getDate() -2 );
+    let filterString = `endTime > '${new Date(date).toISOString()}'`;
+    
     if (searchQuery != '') {
-      filterString = `itemName ~ '${searchQuery}%'`;
+      filterString = ` && itemName ~ '${searchQuery}%'`;
     }
     const records = await pb.collection('auctions').getList(page, itemsPerPage, { sort: "-endTime", filter: filterString });
     items = records.items.map(record => ({
