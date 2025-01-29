@@ -10,6 +10,21 @@
     }
 const openModal= writable(false)
 const enableDelete= writable(false)
+
+function getHumanReadableRole(role: string)  {
+  switch (role) {
+    case 'admin':
+      return 'Admin';
+    case 'member':
+      return 'Member';
+      case 'manager':
+      return 'Manager';
+      case 'lootCouncil':
+      return 'Loot council';
+    default:
+      return role;
+  }
+}
 </script>
 
 
@@ -40,7 +55,7 @@ const enableDelete= writable(false)
         <div class="stat">
           <div class="stat-title">Roles</div>
           <div class="text-info flex flex-wrap">{#each $user?.role as r}
-            <div class="badge badge-outline badge-accent m-1">{r}</div>
+            <div class="badge badge-outline badge-accent m-1">{getHumanReadableRole(r)}</div>
             {/each}
           </div>
         </div>
