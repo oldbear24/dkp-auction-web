@@ -84,14 +84,14 @@
     });
 </script>
 
-<div class="card bg-base-200 shadow-lg {item.winner==$user?.id?'border border-accent':''}	">
+<div class="card bg-base-200  {item.winner==$user?.id?'ring-2 shadow-[0_0_15px] ring-accent shadow-accent':'shadow-lg'}	">
   <figure>
     <img src={item.imageUrl} alt={item.name} class="w-full h-48 object-cover rounded-lg" />
   </figure>
   <div class="card-body">
-    <h2 class="card-title">{item.name}</h2>
+    <h2 class="card-title font-bold underline text-xl decoration-gray-300">{item.name}</h2>
     <p>{item.description}</p>
-    <p>Current Bid: ${item.bid}</p>
+    <p class="font-bold text-lg">Current Bid: {item.bid}</p>
     <div class="flex space-x-2">
       {#if $countdown.years > 0}
         <div class="countdown">
