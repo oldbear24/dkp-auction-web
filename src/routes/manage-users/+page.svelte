@@ -4,7 +4,7 @@
 	import pb from '$lib/pocketbase';
 	import type { RecordModel } from 'pocketbase';
 	import AuthGuard from '../../components/AuthGuard.svelte';
-
+	import { user  as curentUser } from '$lib/stores/store';
 	let users = writable<RecordModel[]>([]);
 	let searchQuery = writable('');
 	let verifiedFilter = writable('');
@@ -150,6 +150,12 @@
 	function filterVerified(filter: string) {
 		verifiedFilter.set(filter);
 	}
+	function deleteUser(id: string,name: string){
+		if(!confirm("Do you realy want to delete user "+name))return
+		pb.collection("users").delete(id).then((x=>{
+			users.update(x=>x.filter(u=>u.id!=id))
+		})).catch(x=>console.error("Could not delete user",id,x))
+		}
 </script>
 
 <div class="container mx-auto">
@@ -209,6 +215,7 @@
 					<th>Name</th>
 					<th>Tokens</th>
 					<th>Validated</th>
+					<th>Actions</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -252,6 +259,9 @@
 								bind:checked={user.validated}
 								class="toggle text-error checked:text-success"
 							/>
+						</td>
+						<td>
+							<button class="btn btn-error" disabled={user.id==$curentUser?.id} on:click={()=>deleteUser(user.id,user.name)} >Delete</button>
 						</td>
 					</tr>
 				{/each}
