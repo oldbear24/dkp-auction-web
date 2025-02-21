@@ -1,15 +1,9 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import pb from '$lib/pocketbase';
 	import { user } from '$lib/stores/store';
-	import { writable } from 'svelte/store';
 	import AuthGuard from '../../components/AuthGuard.svelte';
     let deleteToggle = false
-    function deleteUser(){
-
-     //   pb.collection("users").delete($user?.id)
-    }
-const openModal= writable(false)
-const enableDelete= writable(false)
 
 function getHumanReadableRole(role: string)  {
   switch (role) {
@@ -25,6 +19,17 @@ function getHumanReadableRole(role: string)  {
       return role;
   }
 }
+function deleteUser(){
+  
+  if($user!=null&&confirm("Do you realy want to delete your account")){
+    pb.collection("users").delete($user.id).then((x=>{
+      pb.authStore.clear();
+      user.set(null)
+      goto('/');
+  })).catch(x=>console.error("Could not delete account"))
+  }
+
+  }
 </script>
 
 
@@ -79,7 +84,7 @@ function getHumanReadableRole(role: string)  {
       </div> 
       <div class="divider"></div>
       <div>      <input type="checkbox" class="toggle toggle-error" bind:checked={deleteToggle} />
-      <button disabled={!deleteToggle}  class="btn btn-error w-45">Delete my account</button>
+      <button disabled={!deleteToggle} on:click={deleteUser}  class="btn btn-error w-45">Delete my account</button>
     </div> 
     </div>
     <!--  {#if $showModal && item.state === 'ongoing'}
