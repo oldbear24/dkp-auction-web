@@ -26,7 +26,7 @@ function deleteUser(){
       pb.authStore.clear();
       user.set(null)
       goto('/');
-  })).catch(x=>console.error("Could not delete account"))
+  })).catch(x=>console.error("Could not delete account ERROR:",x))
   }
 
   }
