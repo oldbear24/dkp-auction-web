@@ -156,6 +156,12 @@
 			users.update(x=>x.filter(u=>u.id!=id))
 		})).catch(x=>console.error("Could not delete user",id,x))
 		}
+		function clearTokens(){
+			let percString = prompt("How many percent do you want to remove.","0")
+			if(percString==null||percString=="0")return
+			let perc = parseInt(percString)
+			pb.send("api/clear-tokens",{method:"POST",body:JSON.stringify({percentage:perc})})		
+		}
 </script>
 
 <div class="container mx-auto">
@@ -172,6 +178,9 @@
 		</button>
 		<button class="btn btn-secondary" on:click={openFileDialog}>
 			Import users
+		</button>
+		<button class="btn btn-error" on:click={clearTokens}>
+			Clear tokens
 		</button>
 	</div>
 	<div class="filter">
