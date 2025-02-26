@@ -6,16 +6,16 @@
 	let itemName = writable('');
 	let description = writable('');
 	let mainImage = writable<File | null>(null);
-	let endTime = writable<string>(getNextDate()); // Set default value
+	let endTime = writable<string>(""); // Set default value
         let startingBid = writable(0);
 
-    function getNextDate() {
+    function getNextDate(days: number) {
         const date = new Date();
-        date.setDate(date.getDate() + 7);
+        date.setDate(date.getDate() + days);
         date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
         date.setMilliseconds(0);
         date.setSeconds(0);
-        return new Date(date).toISOString().slice(0, -1);
+        endTime.set(new Date(date).toISOString().slice(0, -1));
     }
 	async function createAuction() {
 		try {
@@ -33,7 +33,7 @@
 			itemName.set('');
 			description.set('');
 			mainImage.set(null);
-			endTime.set(getNextDate());
+			endTime.set("");
 		} catch (error) {
 			console.error('Error:', error);
 		}
@@ -62,7 +62,11 @@
     <input id="mainImage" class="file-input" type="file" on:change={handleFileChange} />
 	<label class="fieldset-label" for="endTime">End Time</label>
 	<input required id="endTime" class="input validator" bind:value={$endTime} type="datetime-local" defaultValue={getNextDate} />
-	<button class="btn btn-primary" type="submit" >Create Auction</button>
+	<div>
+		<button class="btn btn-accent" on:click={()=>getNextDate(1)} type="button" >+1D</button>
+		<button class="btn btn-accent" on:click={()=>getNextDate(7)} type="button" >+7D</button>	
+	</div>
+		<button class="btn btn-primary" type="submit" >Create Auction</button>
 </fieldset>
 </form>
 </div>
