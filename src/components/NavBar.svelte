@@ -57,7 +57,7 @@
 		<a class="btn btn-ghost text-xl" href="/">Auction House</a>
 	</div>
 
-	<div class="flex-none">
+	<div class="flex-none pr-3">
 		{#if $user}
 			<div
 				data-tip="Your current tokens and usable tokens."
@@ -65,7 +65,12 @@
 			>
 				<span>Tokens: {$user.tokens} ({$user.tokens - $user.reservedTokens})</span>
 			</div>
-
+			<div class="indicator">
+				{#if $notificationCount > 99}
+					<span class="indicator-item badge badge-primary badge-xs">99+</span>
+				{:else if $notificationCount>0}
+					<span class="indicator-item badge badge-primary badge-xs">{$notificationCount}</span>
+				{/if}
 			<div class="dropdown dropdown-end">
 				<button class="btn btn-ghost btn-circle avatar avatar-placeholder" aria-label="User menu">
 					<div class="ring-primary ring-offset-base-100 w-10 rounded-full ring ring-offset-1">
@@ -95,6 +100,7 @@
 					<li><button type="button" on:click={logout} aria-label="Logout">Logout</button></li>
 				</ul>
 			</div>
+		</div>
 		{:else}
 			<button class="btn btn-primary" on:click={loginWithDiscord}>Login with Discord</button>
 		{/if}
