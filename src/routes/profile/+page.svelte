@@ -47,7 +47,7 @@
 		}
 		currentPage = page;
 		pb.collection('transactions')
-			.getList(page, itemsPerPage, { filter: 'user = "' + $user?.id + '"' ,fields: 'amount,note,created' })
+			.getList(page, itemsPerPage, { filter: 'user = "' + $user?.id + '"' ,fields: 'amount,note,created',sort: '-created' })
 			.then((resp) => {
 				transactions = resp;
 				console.debug('Transactions:', transactions.items);
