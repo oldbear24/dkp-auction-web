@@ -42,9 +42,7 @@
 	}
 
 	function getTransactions(page = 1) {
-		if (page < 1 || (transactions.totalPages && page > transactions.totalPages)) {
-			return; // Prevent fetching if the page is out of bounds
-		}
+		console.log('Fetching transactions for page:', page);
 		currentPage = page;
 		pb.collection('transactions')
 			.getList(page, itemsPerPage, { filter: 'user = "' + $user?.id + '"' ,fields: 'amount,note,created',sort: '-created' })
@@ -58,7 +56,10 @@
 	}
 	onMount(() => {
 		getTransactions()
-	})
+	});
+	$: if ($user) {
+		getTransactions(); // Call getTransactions when $user is available
+	}
 </script>
 
 <div class="flex w-full flex-col">
