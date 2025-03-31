@@ -5,7 +5,7 @@
 	import ToastManager from './ToastManager.svelte';
 	import { writable } from 'svelte/store';
 	import NotificationsList from './NotificationsList.svelte';
-
+	let notificationListComponent: NotificationsList;
 	let notificationCount = writable(0);
   const openNotification = writable(false);
 	async function loginWithDiscord() {
@@ -109,11 +109,13 @@
 {#if $openNotification}
 <dialog class="modal modal-open">
   <div class="modal-box">
-    <h3 class="text-lg font-bold">Notifications</h3>
-    <NotificationsList bind:notificationCount></NotificationsList>
-    <div class="modal-action">
-      <form method="dialog">        <!-- if there is a button in form, it will close the modal -->
-        <button class="btn" on:click={()=>{openNotification.set(false)}}>Close</button>
+    <h3 class="text-lg font-bold pb-2">Notifications</h3>
+    <NotificationsList bind:notificationCount bind:this={notificationListComponent} />
+	    <div class="modal-action">
+      <form method="dialog">  
+		<button class="btn btn-error" on:click={()=>notificationListComponent.clearAll()}>Clear all</button>
+		<!-- if there is a button in form, it will close the modal -->
+        <button class="btn btn-primary" on:click={()=>{openNotification.set(false)}}>Close</button>
       </form>
     </div>
   </div>

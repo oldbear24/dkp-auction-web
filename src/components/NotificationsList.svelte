@@ -13,7 +13,7 @@ const notifications = writable<RecordModel[]>();
     });
 
 
-  function clearAll() {
+ export function clearAll() {
     pb.send("/api/seen-notifications",{method:"POST"}).then(() => {
       notifications.set([]);
       notificationCount.set(0);
@@ -29,27 +29,15 @@ const notifications = writable<RecordModel[]>();
     });
   }
 </script>
-<div>
-    <button class="btn" on:click={clearAll}>Clear all</button>
-</div>
 <div class="overflow-auto rounded-box border border-base-content/5 bg-base-100 h-96">
     <table class="table table-pin-rows">
-      <!-- head -->
-      <thead>
-        <tr>
-          <th></th>          
-          <th></th>
-        </tr>
-      </thead>
       <tbody>
         {#each $notifications as notification} 
         <tr>
             <th>{notification.text}</th>
-            <td><button class="btn" on:click="{()=>clearNotification(notification.id)}">Clear</button></td>
-          </tr>
-  
-        {/each}          
-        
+            <td><button class="btn btn-error btn-sm" on:click="{()=>clearNotification(notification.id)}">Clear</button></td>
+          </tr>  
+        {/each}                  
       </tbody>
     </table>
   </div>
