@@ -5,18 +5,9 @@
   import { writable } from 'svelte/store';
   import { onDestroy, onMount } from 'svelte';
   import { showToast,user } from '$lib/stores/store';
-  interface AuctionItem {
-    id: string;
-    name: string;
-    description: string;
-    imageUrl: string;
-    bid: number;
-    state: string;
-    endTime: string; // Assuming endTime is a string in ISO format
-    winner:string
-  }
+	import type { RecordModel } from 'pocketbase';
 
-  export let item: AuctionItem;
+  export let item: RecordModel;
   let showModal = writable(false);
   let bidAmount = writable(item.bid);
   let countdown = writable({ years: 0, months: 0, days: 0, hours: 0, minutes: 0, seconds: 0 });
@@ -72,13 +63,22 @@
 
   onMount(() => {
     console.debug('Setting interval');
+    console.debug('Item', item);
     updateCountdown();
     const interval = setInterval(updateCountdown, 1000);
     return () => {
       console.debug('Clearing interval');
       clearInterval(interval);}
   });
-
+    function getImage(record: RecordModel) {
+      let imgUrl
+      if ( record.mainImage==null||record.mainImage==''){ 
+        imgUrl = "/no_image_placeholder_dark.png";
+      }else{
+       imgUrl = pb.files.getURL(record, record.mainImage, { 'thumb': '500x200' });
+      }
+      return imgUrl;
+    }
   onDestroy( () => {
         console.log("Date Component removed")
     });
@@ -86,12 +86,12 @@
 
 <div class="card bg-base-200  {item.winner==$user?.id?'ring-2 shadow-[0_0_15px] ring-accent shadow-accent':'shadow-lg'}	">
   <figure>
-    <img src={item.imageUrl} alt={item.name} class="w-full h-48 object-cover rounded-lg" />
+    <img src={getImage(item)} alt={item.name} class="w-full h-48 object-cover rounded-lg" />
   </figure>
   <div class="card-body">
     <h2 class="card-title font-bold underline text-xl decoration-gray-300">{item.name}</h2>
     <p>{item.description}</p>
-    <p class="font-bold text-lg">Current Bid: {item.bid}</p>
+    <p class="font-bold text-lg">Current Bid: {item.currentBid}</p>
     <div class="flex space-x-2">
       {#if $countdown.years > 0}
         <div class="countdown">
@@ -142,10 +142,10 @@
     <div class="modal-box">
       <h2 class="card-title">{item.name}</h2>
       <figure>
-        <img src={item.imageUrl} alt={item.name} class="w-full h-48 object-cover rounded-lg" />
+        <img src={getImage(item)} alt={item.name} class="w-full h-48 object-cover rounded-lg" />
       </figure>
       <p>{item.description}</p>
-      <p>Current Bid: ${item.bid}</p>
+      <p>Current Bid: ${item.currentBid}</p>
       <div class="form-control">
         <label class="label" for="bidAmount">
           <span class="label-text">Your Bid Amount</span>

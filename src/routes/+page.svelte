@@ -1,12 +1,11 @@
 <script lang="ts">
-  import type { RecordModel } from 'pocketbase';
+  import type { ListResult, RecordModel } from 'pocketbase';
   import pb, { subscribeToAuctionUpdate, unsubscribeFromAuctionUpdates } from '../lib/pocketbase';
   import AuctionItem from '../components/AuctionItem.svelte';
   import { user } from '$lib/stores/store';
-  let items: { id: string; name: string; bid: number; imageUrl: string; description: string; state: string; endTime: string,winner:string }[] = [];
-  let currentPage = 1;
   const itemsPerPage = 9;
-  let totalPages = 1;
+  let items: ListResult<RecordModel> = { page: 1, perPage: itemsPerPage, totalItems: 0, totalPages: 0, items: [] };
+  let currentPage = 1;
   let searchQuery = '';
   async function fetchItems(page: number) {
     const date = new Date();
@@ -17,42 +16,23 @@
       filterString = ` && itemName ~ '${searchQuery}%'`;
     }
     const records = await pb.collection('auctions').getList(page, itemsPerPage, { sort: "-endTime", filter: filterString });
-    items = records.items.map(record => ({
-      id: record.id,
-      name: record.itemName,
-      bid: record.currentBid,
-      imageUrl: pb.files.getURL(record, record.mainImage, { 'thumb': '500x200' }) || '/no_image_placeholder_dark.png',
-      description: record.description,
-      state: record.state,
-      endTime: record.endTime,
-      winner: record.winner
-    }));
-    totalPages = Math.ceil(records.totalItems / itemsPerPage);
+    items = records;
   }
 
   function updateItem(record: RecordModel) {
-    const index = items.findIndex(item => item.id === record.id);
+    const index = items.items.findIndex(item => item.id === record.id);
     console.debug('Updating item:', record.id, index);
 
     if (index !== -1) {
-      let imgUrl = pb.files.getURL(record, record.mainImage, { 'thumb': '500x200' });
-      if (!imgUrl) {
-        imgUrl = "/no_image_placeholder_dark.png";
-      }
-      items[index].bid = record.currentBid;
-      items[index].imageUrl = imgUrl;
-      items[index].description = record.description;
-      items[index].state = record.state;
-      items[index].endTime = record.endTime;
-      items[index].winner = record.winner;
-
+      items.items[index]=record;
+      items.items = [...items.items]; // Trigger reactivity
     }
   }
 
   async function subscribeToCurrentPage() {
     await unsubscribeFromAuctionUpdates();
     console.debug('Subscribing to updates for current page');
-    const recordIds = items.map(item => item.id);
+    const recordIds = items.items.map(item => item.id);
     recordIds.forEach(recordId => subscribeToAuctionUpdate(recordId, updateItem));
   }
 
@@ -68,7 +48,7 @@
   fetchItems(currentPage).then(subscribeToCurrentPage);
 </script>
 {#if $user}
-<div class="container mx-auto px-4 overflow-x-auto">
+<div class="container mx-auto px-4 overflow-x-auto pb-4">
   <div class="flex justify-between items-center mb-4">
     <input 
       type="text" 
@@ -79,15 +59,16 @@
     />
   </div>
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-    {#each items as item}
+    {#each items.items as item}
       <AuctionItem {item} />
     {/each}
-  </div>
-  <div class="mt-4 flex justify-between items-center">
-    <button class="btn btn-primary" on:click={() => changePage(currentPage - 1)} disabled={currentPage === 1}>Previous</button>
-    <span>Page {currentPage} of {totalPages}</span>
-    <button class="btn btn-primary" on:click={() => changePage(currentPage + 1)} disabled={currentPage === totalPages}>Next</button>
-  </div>
+  </div> 
+
+</div>
+<div class="join flex justify-center pt-2">
+  <button class="join-item btn" tabindex="-1" on:click={() => changePage(currentPage - 1)} disabled={currentPage === 1}>«</button>
+  <button class="join-item btn" tabindex="-1">Page {currentPage} of {items.totalPages}</button>
+  <button class="join-item btn" tabindex="-1" on:click={() => changePage(currentPage + 1)} disabled={currentPage === items.totalPages||items.totalPages===0}>»</button>
 </div>
 {:else}
 <div class="flex justify-center items-center h-screen">
