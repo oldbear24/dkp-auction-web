@@ -135,9 +135,9 @@
 		</table>
 	</div>
 	<div class="join justify-center pt-2">
-		<button class="join-item btn" on:click={() => getTransactions(currentPage - 1)} disabled={currentPage === 1}>«</button>
-		<button class="join-item btn">Page {currentPage} of {transactions.totalPages}</button>
-		<button class="join-item btn" on:click={() => getTransactions(currentPage + 1)} disabled={currentPage === transactions.totalPages}>»</button>
+		<button class="join-item btn" tabindex="-1" on:click={() => getTransactions(currentPage - 1)} disabled={currentPage === 1}>«</button>
+		<button class="join-item btn" tabindex="-1">Page {currentPage} of {transactions.totalPages}</button>
+		<button class="join-item btn" tabindex="-1" on:click={() => getTransactions(currentPage + 1)} disabled={currentPage === transactions.totalPages}>»</button>
 	</div>
 	<div class="divider"></div>
 
