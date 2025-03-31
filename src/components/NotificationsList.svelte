@@ -7,7 +7,7 @@ export let notificationCount = writable(0);
 
 const notifications = writable<RecordModel[]>();
     onMount(() => {
-       pb.collection('notifications').getFullList( { fields: 'id,text' }).then((resp) => {
+       pb.collection('notifications').getFullList( { fields: 'id,text,created' }).then((resp) => {
           notifications.set(resp);
        });
     });
@@ -35,6 +35,7 @@ const notifications = writable<RecordModel[]>();
         {#each $notifications as notification} 
         <tr>
             <th>{notification.text}</th>
+            <th>{new Date(notification.created).toLocaleString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</th>
             <td><button class="btn btn-error btn-sm" on:click="{()=>clearNotification(notification.id)}">Clear</button></td>
           </tr>  
         {/each}                  
