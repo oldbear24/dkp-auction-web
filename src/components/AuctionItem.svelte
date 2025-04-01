@@ -86,11 +86,11 @@
 
 <div class="card bg-base-200  {item.winner==$user?.id?'ring-2 shadow-[0_0_15px] ring-accent shadow-accent':'shadow-lg'}	">
   <figure>
-    <img src={getImage(item)} alt={item.name} class="w-full h-48 object-cover rounded-lg" />
+    <img src={getImage(item)} alt={item.itemName} class="w-full h-48 object-cover rounded-lg" />
   </figure>
   <div class="card-body">
-    <h2 class="card-title font-bold underline text-xl decoration-gray-300">{item.name}</h2>
-    <p>{item.description}</p>
+    <h2 class="card-title font-bold underline text-xl decoration-gray-300">{item.itemName}</h2>
+    <p class="whitespace-pre-wrap overflow-auto max-h-20">{item.description}</p>
     <p class="font-bold text-lg">Current Bid: {item.currentBid}</p>
     <div class="flex space-x-2">
       {#if $countdown.years > 0}
@@ -140,9 +140,9 @@
 {#if $showModal && item.state === 'ongoing'}
   <div class="modal modal-open">
     <div class="modal-box">
-      <h2 class="card-title">{item.name}</h2>
+      <h2 class="card-title">{item.itemName}</h2>
       <figure>
-        <img src={getImage(item)} alt={item.name} class="w-full h-48 object-cover rounded-lg" />
+        <img src={getImage(item)} alt={item.itemName} class="w-full h-48 object-cover rounded-lg" />
       </figure>
       <p>{item.description}</p>
       <p>Current Bid: ${item.currentBid}</p>
