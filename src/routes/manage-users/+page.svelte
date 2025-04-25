@@ -10,7 +10,7 @@
 	let verifiedFilter = writable('');
 	let selectedUsers = writable<string[]>([]);
 	let showDialog = writable(false);
-	let tokensToAdd = writable(0);
+	let tokensAmmount = writable(0);
 	$: allSelected = $users.length === $selectedUsers.length;
 	const userFields = 'id,name,avatar,tokens,validated,collectionId,discordId';
 	async function fetchUsers() {
@@ -109,21 +109,22 @@
 
 	function closeDialog() {
 		showDialog.set(false);
-		tokensToAdd.set(0);
+		tokensAmmount.set(0);
 	}
 
-	async function addTokens() {
+	async function changeTokens() {
 		try {
 			const userIds = $selectedUsers;
-			const newTokens = $tokensToAdd;
+			const newTokens = $tokensAmmount;
 			await pb.send('/api/change-tokens', {
 				method: 'POST',
 				body: JSON.stringify({ userIds: userIds, amount: newTokens })
 			});
 
 			closeDialog();
+			selectedUsers.set([]);
 		} catch (error) {
-			console.error('Error adding tokens:', error);
+			console.error('Error changing tokens:', error);
 		}
 	}
 
@@ -174,7 +175,7 @@
 	/>
 	<div class="mb-4 flex space-x-2">
 		<button class="btn btn-primary" on:click={openDialog} disabled={$selectedUsers.length === 0}>
-			Add Tokens to Selected Users
+			Change Tokens
 		</button>
 		<button class="btn btn-secondary" on:click={openFileDialog}>
 			Import users
@@ -284,18 +285,18 @@
 {#if $showDialog}
 	<div class="modal modal-open">
 		<div class=" rounded p-6 shadow-lg modal-box">
-			<h2 class="mb-4 text-xl font-bold">Add Tokens</h2>
+			<h2 class="mb-4 text-xl font-bold">Change Tokens</h2>
 			<p>Selected Users: {$selectedUsers.length}</p>
-			<label class="mb-2 block" for="tokensToAdd">Tokens to Add</label>
+			<label class="mb-2 block" for="tokensAmmount">Token amount</label>
 			<input
-				id="tokensToAdd"
+				id="tokensAmmount"
 				type="number"
 				class="input input-bordered mb-4 w-full"
-				bind:value={$tokensToAdd}
+				bind:value={$tokensAmmount}
 			/>
 			<div class="flex justify-end">
 				<button class="btn btn-secondary mr-2" on:click={closeDialog}>Cancel</button>
-				<button class="btn btn-primary" on:click={addTokens}>Submit</button>
+				<button class="btn btn-primary" on:click={changeTokens}>Submit</button>
 			</div>
 		</div>
 	</div>
