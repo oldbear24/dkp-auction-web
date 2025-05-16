@@ -11,6 +11,8 @@
 	let selectedUsers = writable<string[]>([]);
 	let showDialog = writable(false);
 	let tokensAmmount = writable(0);
+	let tokensChangeReason = writable('');
+
 	$: allSelected = $users.length === $selectedUsers.length;
 	const userFields = 'id,name,avatar,tokens,validated,collectionId,discordId';
 	async function fetchUsers() {
@@ -110,15 +112,17 @@
 	function closeDialog() {
 		showDialog.set(false);
 		tokensAmmount.set(0);
+		tokensChangeReason.set('');
 	}
 
 	async function changeTokens() {
 		try {
 			const userIds = $selectedUsers;
 			const newTokens = $tokensAmmount;
+			const changeReason = $tokensChangeReason;
 			await pb.send('/api/change-tokens', {
 				method: 'POST',
-				body: JSON.stringify({ userIds: userIds, amount: newTokens })
+				body: JSON.stringify({ userIds: userIds, amount: newTokens,reason: changeReason })
 			});
 
 			closeDialog();
@@ -293,6 +297,13 @@
 				type="number"
 				class="input input-bordered mb-4 w-full"
 				bind:value={$tokensAmmount}
+			/>
+			<label class="mb-2 block" for="tokensAmmount">Reason</label>
+			<input
+				id="tokensAmmount"
+				type="text"
+				class="input input-bordered mb-4 w-full"
+				bind:value={$tokensChangeReason}
 			/>
 			<div class="flex justify-end">
 				<button class="btn btn-secondary mr-2" on:click={closeDialog}>Cancel</button>
