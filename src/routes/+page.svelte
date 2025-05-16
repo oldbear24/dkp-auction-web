@@ -13,8 +13,9 @@
     let filterString = `endTime > '${new Date(date).toISOString()}'`;
     
     if (searchQuery != '') {
-      filterString = ` && itemName ~ '${searchQuery}%'`;
+      filterString += ` && itemName ~ '${searchQuery}%'`;
     }
+    console.debug('Fetching items with filter:', filterString);
     const records = await pb.collection('auctions').getList(page, itemsPerPage, { sort: "-endTime", filter: filterString });
     items = records;
   }
