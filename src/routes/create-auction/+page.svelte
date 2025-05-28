@@ -2,7 +2,7 @@
 	import {  writable } from 'svelte/store';
 	import pb from '$lib/pocketbase';
 	import AuthGuard from '../../components/AuthGuard.svelte';
-
+	let items = writable<string[]>([])
 	let itemName = writable('');
 	let description = writable('');
 	let mainImage = writable<File | null>(null);
@@ -45,6 +45,14 @@
 			mainImage.set(target.files[0]);
 		}
 	}
+	function loadItems() {
+		pb.collection('items').getFullList().then((data) => {
+			items.set(data.map(item => item.name));
+		}).catch((error) => {
+			console.error('Error loading items:', error);
+		});
+	}
+	loadItems();
 </script>
 
 <div class="justify-center flex w-full">
@@ -53,7 +61,7 @@
 
 	<legend class="fieldset-legend">Add item to auction</legend>
 	<label class="fieldset-label" for="itemName">Item name</label>
-	<input required id="itemName" type="text" class="input validator" bind:value={$itemName} />
+	<input required id="itemName" type="text" class="input validator" bind:value={$itemName} list="my-options" />
 	<label class="fieldset-label" for="description">Description</label>
 	<textarea id="description" class="input min-h-40" bind:value={$description}></textarea>
 	<label class="fieldset-label" for="startingBid">Starting bud</label>
@@ -70,4 +78,9 @@
 </fieldset>
 </form>
 </div>
+<datalist id="my-options">
+	{#each $items as item}
+		<option value={item}></option>
+	{/each}
+  </datalist>
 <AuthGuard requiredRole="manager" />
