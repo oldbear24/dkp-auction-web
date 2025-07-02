@@ -171,6 +171,13 @@
 
 <div class="container mx-auto">
 	<h1 class="mb-4 text-2xl font-bold">Manage Users</h1>
+	<div class="stats shadow">
+  <div class="stat">
+   
+    <div class="stat-title">Users</div>
+    <div class="stat-value">{$users.length}</div>
+  </div>
+</div>
 	<input
 		type="text"
 		placeholder="Search by name"
@@ -211,6 +218,7 @@
 			aria-label="Unvalidated"
 		/>
 	</div>
+
 	<div class="h-250 overflow-x-auto">
 		<table class="table-pin-cols table-pin-rows table">
 			<!-- head -->
