@@ -177,6 +177,14 @@
     <div class="stat-title">Users</div>
     <div class="stat-value">{$users.length}</div>
   </div>
+    <div class="stat">
+    <div class="stat-title">Tokens average</div>
+    <div class="stat-value">{($users.reduce((a,n)=>a+n.tokens,0)/$users.length).toFixed(2)}</div>
+  </div>
+     <div class="stat">
+    <div class="stat-title">Tokens total</div>
+    <div class="stat-value">{$users.reduce((a,n)=>a+n.tokens,0)}</div>
+  </div>
 </div>
 	<input
 		type="text"
