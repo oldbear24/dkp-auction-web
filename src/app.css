@@ -3,4 +3,6 @@
 @import 'tailwindcss/utilities';
 */
 @import "tailwindcss";
-@plugin "daisyui";
+ @plugin "daisyui" {
+   themes: dark --default;
+ }
