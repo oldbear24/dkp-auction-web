@@ -6,12 +6,12 @@
   import { onDestroy, onMount } from 'svelte';
   import { showToast,user } from '$lib/stores/store';
 	import type { RecordModel } from 'pocketbase';
+  $: currentBid = item ? Math.max(item.startingBid, item.currentBid) : 0;
 
   export let item: RecordModel;
   let showModal = writable(false);
   let bidAmount = writable(item.bid);
   let countdown = writable({ years: 0, months: 0, days: 0, hours: 0, minutes: 0, seconds: 0 });
-
   function openModal() {
     if (item.state !== 'ongoing') return;
     showModal.set(true);
@@ -91,7 +91,7 @@
   <div class="card-body">
     <h2 class="card-title font-bold underline text-xl decoration-gray-300">{item.itemName}</h2>
     <p class="whitespace-pre-wrap overflow-auto max-h-20">{item.description}</p>
-    <p class="font-bold text-lg">Current Bid: {item.currentBid}</p>
+    <p class="font-bold text-lg">Current Bid: {currentBid}</p>
     <div class="flex space-x-2">
       {#if $countdown.years > 0}
         <div class="countdown">
@@ -145,7 +145,7 @@
         <img src={getImage(item)} alt={item.itemName} class="w-full h-48 object-cover rounded-lg" />
       </figure>
       <p>{item.description}</p>
-      <p>Current Bid: ${item.currentBid}</p>
+      <p>Current Bid: {currentBid}</p>
       <div class="form-control">
         <label class="label" for="bidAmount">
           <span class="label-text">Your Bid Amount</span>
