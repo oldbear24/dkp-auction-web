@@ -62,7 +62,6 @@
   }
 
   onMount(() => {
-    console.debug("Item bid:",item.bid)
     console.debug('Setting interval');
     console.debug('Item', item);
     updateCountdown();
