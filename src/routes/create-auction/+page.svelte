@@ -6,6 +6,9 @@
 	let itemName = writable('');
 	let description = writable('');
 	let mainImage = writable<File | null>(null);
+	// Rarity for auction items (shared source)
+	import { RARITY_OPTIONS, RARITY_MAP, type RarityValue } from '$lib/rarity';
+	let rarity = writable<RarityValue>();
 	let endTime = writable<string>(""); // Set default value
         let startingBid = writable(0);
 
@@ -21,6 +24,7 @@
 		try {
 			const data = {
 				itemName: $itemName,
+				rarity: $rarity,
 				description: $description,
 				startingBid: $startingBid,
 				endTime: new Date($endTime).toISOString(),
@@ -62,6 +66,12 @@
 	<legend class="fieldset-legend">Add item to auction</legend>
 	<label class="fieldset-label" for="itemName">Item name</label>
 	<input required id="itemName" type="text" class="input validator" bind:value={$itemName} list="my-options" />
+	<label class="fieldset-label" for="rarity">Rarity</label>
+	<select id="rarity" class="select" bind:value={$rarity}>
+		{#each RARITY_OPTIONS as opt}
+			<option value={opt} class={RARITY_MAP[opt].class}>{RARITY_MAP[opt].label}</option>
+		{/each}
+	</select>
 	<label class="fieldset-label" for="description">Description</label>
 	<textarea id="description" class="input min-h-40" bind:value={$description}></textarea>
 	<label class="fieldset-label" for="startingBid">Starting bud</label>

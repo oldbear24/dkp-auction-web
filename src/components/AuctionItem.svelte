@@ -6,6 +6,7 @@
   import { onDestroy, onMount } from 'svelte';
   import { showToast,user } from '$lib/stores/store';
 	import type { RecordModel } from 'pocketbase';
+	import RarityLabel from './RarityLabel.svelte';
   $: currentBid = item ? Math.max(item.startingBid, item.currentBid) : 0;
 
   export let item: RecordModel;
@@ -90,6 +91,7 @@
   </figure>
   <div class="card-body">
     <h2 class="card-title font-bold underline text-xl decoration-gray-300">{item.itemName}</h2>
+    <p><RarityLabel value={item.rarity} asBadge /></p>
     <p class="whitespace-pre-wrap overflow-auto max-h-20">{item.description}</p>
     <p class="font-bold text-lg">Current Bid: {currentBid}</p>
     <div class="flex space-x-2">
