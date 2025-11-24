@@ -40,6 +40,6 @@
 		"@tailwindcss/postcss": "^4.1.11",
 		"@tailwindcss/vite": "^4.1.11",
 		"dotenv": "^17.2.3",
-		"pocketbase": "^0.26.2"
+		"pocketbase": "^0.26.3"
 	}
 }
