@@ -11,6 +11,6 @@ updates:
       interval: "weekly"   # or "daily", "monthly"
     groups:
       all-deps:
-        applies-to: "all"
+        applies-to: "version-updates"
         patterns:
           - "*"            # match every dependency
