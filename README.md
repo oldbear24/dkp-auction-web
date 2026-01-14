@@ -1,4 +1,16 @@
-# dkp-auction-web2
+# dkp-auction-web
+
+![Status: Deprecated](https://img.shields.io/badge/status-deprecated-red)
+
+> ⚠️ **DEPRECATED / MOVED**
+>
+> This repository (frontend) has been merged into the main application repository.
+>
+> ✅ New location: **[oldbear24/dkp-auction](https://github.com/oldbear24/dkp-auction)**  
+> 📁 Frontend path: `/web`  
+>
+> This repo is kept only for history and will not receive updates.
+
 
 A web application for managing DKP (Dragon Kill Points) auctions, built with Svelte.
 
